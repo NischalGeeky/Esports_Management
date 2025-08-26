@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>God Mode - Esports Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Rajdhani', sans-serif;
+      background-color: #0d0d0d;
+      color: #f1f1f1;
+    }
+    h1, h2, h3 {
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing: 1px;
+    }
+    nav {
+      background: #111;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    nav a {
+      color: #0ff;
+      margin-left: 20px;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+    nav a:hover {
+      color: #ff0;
+    }
+    .hero {
+      text-align: center;
+      padding: 5rem 2rem;
+      background: radial-gradient(circle at top, #1a1a1a, #0d0d0d);
+    }
+    .hero h1 {
+      font-size: 3.5rem;
+      color: #0ff;
+      text-shadow: 0 0 10px #0ff;
+    }
+    .hero p {
+      font-size: 1.3rem;
+      margin: 1rem 0 2rem;
+    }
+    .btn {
+      font-family: 'Orbitron', sans-serif;
+      background-color: rgb(0, 0, 0);
+      color: #0ff;
+      border: none;
+      padding: 1rem 2rem;
+      margin: 10px;
+      cursor: pointer;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    .btn:hover {
+      background-color:#0ff;
+      color: red;
+    }
+    .section {
+      padding: 3rem 2rem;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      background: #1a1a1a;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+      transition: transform 0.2s;
+    }
+    .card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+    }
+    .card-content {
+      padding: 1rem;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    footer {
+      background: #111;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #aaa;
+    }
+    .rules, .hall-of-fame, .sponsors, .stats {
+      margin-top: 3rem;
+    }
+    .stats-container {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      text-align: center;
+    }
+    .stat-box {
+      margin: 1rem;
+      background: #1a1a1a;
+      padding: 1.5rem;
+      border-radius: 12px;
+      min-width: 180px;
+      box-shadow: 0 0 10px rgba(255,255,0,0.2);
+    }
+    .sponsors-logos {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .sponsors-logos img {
+      max-height: 80px;
+      width: auto;
+      opacity: 0.9;
+      transition: 0.3s;
+      object-fit: contain;
+      background: #fff; /* ensures visibility for transparent logos */
+      border-radius: 4px;
+      padding: 1px;
+    }
+
+    .sponsors-logos img:hover {
+      cursor: pointer;
+      opacity: 1; /* makes it brighter on hover */
+      transform: scale(1.1); /* smooth zoom effect */
+    }
+
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav>
+    <div class="logo"><a href="index.html">⚡ God Mode</a></div>
+    <div>
+      <a href="tournaments.html">Tournaments</a>
+      <a href="teams.html">Teams</a>
+      <a href="players.html">Players</a>
+      <a href="login.html">Login</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>Welcome to God Mode</h1>
+    <p>The ultimate arena for global esports champions.</p>
+    <button class="btn">Register Now</button>
+    <button class="btn">Sign In to Explore</button>
+  </section>
+
+  <!-- Trending Tournaments -->
+  <section class="section">
+    <h2>🔥 Trending Tournaments</h2>
+    <div class="cards">
+      <div class="card">
+        <img src="https://via.placeholder.com/400x160/0ff/111?text=Valorant+Nexus" alt="Tournament">
+        <div class="card-content">
+          <h3>God Mode: Valorant Nexus</h3>
+          <p>Prize Pool: $50,000</p>
+        </div>
+      </div>
+      <div class="card">
+        <img src="https://via.placeholder.com/400x160/ff0/111?text=Dota+Eclipse" alt="Tournament">
+        <div class="card-content">
+          <h3>God Mode: Dota Eclipse</h3>
+          <p>Prize Pool: $100,000</p>
+        </div>
+      </div>
+      <div class="card">
+        <img src="https://via.placeholder.com/400x160/f0f/111?text=CSGO+Clash" alt="Tournament">
+        <div class="card-content">
+          <h3>God Mode: CS:GO Clash</h3>
+          <p>Prize Pool: $75,000</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rules & Regulations -->
+  <section class="section rules">
+    <h2>📜 Rules & Regulations</h2>
+    <h3>Main Tournament Registration</h3>
+    <ul>
+      <li>Teams must have 5 registered players.</li>
+      <li>Valid ID and age verification required.</li>
+      <li>Only one team registration per organization.</li>
+    </ul>
+    <h3>Mini-Tournaments</h3>
+    <ul>
+      <li>Follow game-specific rules (e.g., best-of-three).</li>
+      <li>Strict no-cheating/third-party tools policy.</li>
+      <li>Respect officials and referees' decisions.</li>
+    </ul>
+  </section>
+
+  <!-- Hall of Fame -->
+  <section class="section hall-of-fame">
+    <h2>🏆 Hall of Fame</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="card-content">
+          <h3>Team Phoenix</h3>
+          <p>Won: God Mode Valorant 2024</p>
+          <p>Prize: $40,000</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-content">
+          <h3>PlayerX</h3>
+          <p>Champion: Dota Eclipse 2024</p>
+          <p>Prize: $20,000</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Live Stats -->
+  <section class="section stats">
+    <h2>📊 God Mode Live Stats</h2>
+    <div class="stats-container">
+      <div class="stat-box">
+        <h3>120+</h3>
+        <p>Registered Teams</p>
+      </div>
+      <div class="stat-box">
+        <h3>500+</h3>
+        <p>Players Competing</p>
+      </div>
+      <div class="stat-box">
+        <h3>$250,000+</h3>
+        <p>Total Prize Pools</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sponsors -->
+  <section class="section sponsors">
+    <h2>Our Sponsors</h2>
+    <div class="sponsors-logos">
+      <img src="images/nvidia.jpg" alt="NVIDIA">
+      <img src="images/amd.png" alt="AMD">
+      <img src="images/steam.png" alt="Steam">
+      <img src="images/twitch.jpg" alt="Twitch">
+      <img src="images/discord.png" alt="Discord">
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 God Mode Esports Hub | CodingGods</p>
+  </footer>
+</body>
+</html>
