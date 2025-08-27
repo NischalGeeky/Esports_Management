@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>God Mode - Team Registration</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* === Base Styles (from your original file) === */
+    body {
+      margin: 0;
+      font-family: 'Rajdhani', sans-serif;
+      background-color: #0d0d0d;
+      color: #f1f1f1;
+      padding: 2rem;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing: 1px;
+      color: #0ff;
+      text-shadow: 0 0 8px rgba(0, 255, 255, 0.7);
+    }
+
+    .btn {
+      font-family: 'Orbitron', sans-serif;
+      background-color: #000;
+      color: #0ff;
+      border: 1px solid #0ff;
+      padding: 0.8rem 1.5rem;
+      margin-top: 1rem;
+      cursor: pointer;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+    }
+
+    .btn:hover {
+      background-color: #0ff;
+      color: #0d0d0d;
+      box-shadow: 0 0 15px #0ff;
+    }
+    
+    .section {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: #1a1a1a;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    }
+
+    /* === Form Specific Styles === */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      font-size: 1.1rem;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="file"],
+    select {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: #0d0d0d;
+      border: 1px solid #0ff;
+      border-radius: 6px;
+      color: #f1f1f1;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1rem;
+      box-sizing: border-box; /* Ensures padding doesn't affect width */
+      transition: all 0.3s ease;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #ff0;
+      box-shadow: 0 0 8px rgba(255, 255, 0, 0.5);
+    }
+
+    fieldset {
+      border: 1px solid #0ff;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    legend {
+      font-family: 'Orbitron', sans-serif;
+      color: #0ff;
+      padding: 0 0.5rem;
+      font-size: 1.2rem;
+    }
+    
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      margin-top: 1rem;
+    }
+
+    .checkbox-group input {
+      margin-right: 0.75rem;
+    }
+    
+    #form-feedback {
+        margin-top: 1rem;
+        padding: 1rem;
+        border-radius: 6px;
+        text-align: center;
+        font-weight: bold;
+        display: none; /* Hidden by default */
+    }
+
+    .success {
+        background-color: rgba(0, 255, 0, 0.2);
+        border: 1px solid #0f0;
+        color: #0f0;
+    }
+
+    .error {
+        background-color: rgba(255, 0, 0, 0.2);
+        border: 1px solid #f00;
+        color: #f00;
+    }
+  </style>
+</head>
+<body>
+
+  <main>
+    <section class="section">
+      <h2>Register for a Tournament</h2>
+      <form id="teamRegForm">
+
+        <div class="form-group">
+          <label for="tournament">Select Tournament</label>
+          <select id="tournament" name="tournament" required>
+            <option value="">-- Choose an event --</option>
+            <option value="valorant-nexus">God Mode: Valorant Nexus</option>
+            <option value="dota-eclipse">God Mode: Dota Eclipse</option>
+            <option value="csgo-clash">God Mode: CS:GO Clash</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="team-name">Team Name</label>
+          <input type="text" id="team-name" name="team-name" placeholder="Enter your team's official name" required>
+        </div>
+        
+
+        <fieldset>
+          <legend>Player Roster</legend>
+          
+          <h3>Player 1</h3>
+          <div class="form-group">
+            <label for="p1-name">Full Name</label>
+            <input type="text" id="p1-name" name="p1-name" required>
+          </div>
+          <div class="form-group">
+            <label for="p1-email">Email Address</label>
+            <input type="email" id="p1-email" name="p1-email" required>
+          </div>
+          <div class="form-group">
+            <label for="p1-username">In-Game Username</label>
+            <input type="text" id="p1-username" name="p1-username" required>
+          </div>
+          <div class="form-group">
+            <label for="p1-country">Country</label>
+            <input type="text" id="p1-country" name="p1-country" required>
+          </div>
+          
+          <h3>Player 2</h3>
+          <div class="form-group">
+            <label for="p1-name">Full Name</label>
+            <input type="text" id="p1-name" name="p1-name" required>
+          </div>
+          <div class="form-group">
+            <label for="p1-email">Email Address</label>
+            <input type="email" id="p1-email" name="p1-email" required>
+          </div>
+          <div class="form-group">
+            <label for="p1-username">In-Game Username</label>
+            <input type="text" id="p1-username" name="p1-username" required>
+          </div>
+          <div class="form-group">
+            <label for="p1-country">Country</label>
+            <input type="text" id="p1-country" name="p1-country" required>
+          </div>
+          <h3>Player 3</h3>
+          <div class="form-group">
+            <label for="p1-name">Full Name</label>
+            <input type="text" id="p1-name" name="p1-name" required>
+          </div>
+          <div class="form-group">
+            <label for="p1-email">Email Address</label>
+            <input type="email" id="p1-email" name="p1-email" required>
+          </div>
+          <div class="form-group">
+            <label for="p1-username">In-Game Username</label>
+            <input type="text" id="p1-username" name="p1-username" required>
+          </div>
+          <div class="form-group">
+            <label for="p1-country">Country</label>
+            <input type="text" id="p1-country" name="p1-country" required>
+          </div>
+           <h3>Player 4</h3>
+          <div class="form-group">
+            <label for="p1-name">Full Name</label>
+            <input type="text" id="p1-name" name="p1-name" required>
+          </div>
+          <div class="form-group">
+            <label for="p1-email">Email Address</label>
+            <input type="email" id="p1-email" name="p1-email" required>
+          </div>
+          <div class="form-group">
+            <label for="p1-username">In-Game Username</label>
+            <input type="text" id="p1-username" name="p1-username" required>
+          </div>
+          <div class="form-group">
+            <label for="p1-country">Country</label>
+            <input type="text" id="p1-country" name="p1-country" required>
+          </div>
+          <h3>Player 5</h3>
+          <div class="form-group">
+            <label for="p1-name">Full Name</label>
+            <input type="text" id="p1-name" name="p1-name" required>
+          </div>
+          <div class="form-group">
+            <label for="p1-email">Email Address</label>
+            <input type="email" id="p1-email" name="p1-email" required>
+          </div>
+          <div class="form-group">
+            <label for="p1-username">In-Game Username</label>
+            <input type="text" id="p1-username" name="p1-username" required>
+          </div>
+          <div class="form-group">
+            <label for="p1-country">Country</label>
+            <input type="text" id="p1-country" name="p1-country" required>
+          </div>
+          </fieldset>
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="rules-agreement" name="rules-agreement" required>
+          <label for="rules-agreement">Our team agrees to the tournament rules and regulations.</label>
+        </div>
+
+        <button type="submit" class="btn">Submit Registration</button>
+        
+        <div id="form-feedback"></div>
+
+      </form>
+    </section>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('teamRegForm');
+      const feedbackEl = document.getElementById('form-feedback');
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault(); // Stop the default browser submission
+        
+        // 1. Collect Form Data
+        const formData = new FormData(form);
+        const data = {};
+        const players = [];
+
+        // Basic data and player data extraction
+        for(let i = 1; i <= 5; i++) {
+            const player = {
+                fullName: formData.get(`p${i}-name`),
+                email: formData.get(`p${i}-email`),
+                username: formData.get(`p${i}-username`),
+                country: formData.get(`p${i}-country`),
+            };
+            players.push(player);
+        }
+
+        data.tournament = formData.get('tournament');
+        data.teamName = formData.get('team-name');
+        data.teamLogo = formData.get('team-logo').name; // Just getting the file name
+        data.agreedToRules = formData.get('rules-agreement') === 'on';
+        data.players = players.filter(p => p.fullName); // Filter out any empty player slots
+        
+        console.log('Structured Form Data:', data);
+        
+        // 2. Simulate Backend Submission
+        feedbackEl.style.display = 'block';
+        feedbackEl.textContent = 'Submitting...';
+
+        try {
+            // ===================================================================
+            // TODO: FORWARD TO ORACLE 11g DATABASE
+            //
+            // In a real application, you would use the fetch() API here to
+            // send the 'data' object to a backend endpoint (e.g., a REST API
+            // built with Node.js, Python, Java, or PHP). That endpoint would
+            // then connect to your Oracle 11g database and insert the records
+            // into the respective tables (Teams, Players, Registrations, etc.).
+            //
+            // Example fetch call:
+            /*
+            fetch('https://your-backend-api.com/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log('Success:', result);
+                feedbackEl.className = 'success';
+                feedbackEl.textContent = 'Registration successful! A confirmation has been sent.';
+                form.reset();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                feedbackEl.className = 'error';
+                feedbackEl.textContent = 'An error occurred. Please try again later.';
+            });
+            */
+            // ===================================================================
+
+            // Simulating a successful submission after 1.5 seconds
+            setTimeout(() => {
+                feedbackEl.className = 'success';
+                feedbackEl.textContent = 'Success! Your registration data has been prepared. (Backend not connected)';
+                form.reset();
+            }, 1500);
+
+        } catch (error) {
+            console.error('Submission error:', error);
+            feedbackEl.className = 'error';
+            feedbackEl.textContent = 'A client-side error occurred. Please check the console.';
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
