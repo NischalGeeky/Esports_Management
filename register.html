@@ -4,346 +4,308 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>God Mode - Team Registration</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50,5 L95,27.5 L95,72.5 L50,95 L5,72.5 L5,27.5 Z' fill='%230ff'/%3E%3Ctext x='50' y='62' font-size='40' font-family='Orbitron, sans-serif' fill='white' text-anchor='middle' font-weight='bold'%3EGM%3C/text%3E%3C/svg%3E">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
   <style>
-    /* === Base Styles (from your original file) === */
+    :root {
+      --primary-cyan: #0ff;
+      --hover-yellow: #ff0;
+      --dark-grey: #1a1a1a;
+      --off-white: #f1f1f1;
+      --dark-bg: #0d0d0d;
+      --success-green: #0f0;
+      --error-red: #f00;
+    }
     body {
       margin: 0;
       font-family: 'Rajdhani', sans-serif;
-      background-color: #0d0d0d;
-      color: #f1f1f1;
-      padding: 2rem;
+      background-color: var(--dark-bg);
+      color: var(--off-white);
     }
-
     h1, h2, h3 {
       font-family: 'Orbitron', sans-serif;
       letter-spacing: 1px;
-      color: #0ff;
-      text-shadow: 0 0 8px rgba(0, 255, 255, 0.7);
     }
-
-    .btn {
-      font-family: 'Orbitron', sans-serif;
-      background-color: #000;
-      color: #0ff;
-      border: 1px solid #0ff;
-      padding: 0.8rem 1.5rem;
-      margin-top: 1rem;
-      cursor: pointer;
-      border-radius: 8px;
+    nav {
+      background: rgba(17, 17, 17, 0.8);
+      backdrop-filter: blur(10px);
+      padding: 0.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid #333;
+    }
+    nav a {
+      color: var(--primary-cyan);
+      margin-left: 20px;
+      text-decoration: none;
+      transition: color 0.3s;
       font-weight: bold;
-      transition: all 0.3s ease;
-      font-size: 1rem;
     }
-
-    .btn:hover {
-      background-color: #0ff;
-      color: #0d0d0d;
-      box-shadow: 0 0 15px #0ff;
+    nav a:hover {
+      color: var(--hover-yellow);
     }
-    
-    .section {
+    .logo-svg {
+        height: 50px;
+        width: auto;
+    }
+    .main-container {
       max-width: 800px;
       margin: 2rem auto;
       padding: 2rem;
-      background: #1a1a1a;
+      background: var(--dark-grey);
       border-radius: 12px;
       box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
     }
-
-    /* === Form Specific Styles === */
     .form-group {
-      margin-bottom: 1.25rem;
+      margin-bottom: 1.5rem;
     }
-
     label {
       display: block;
       margin-bottom: 0.5rem;
       font-weight: 500;
       font-size: 1.1rem;
     }
-
     input[type="text"],
-    input[type="email"],
-    input[type="file"],
     select {
       width: 100%;
       padding: 0.75rem;
       background-color: #0d0d0d;
-      border: 1px solid #0ff;
+      border: 1px solid var(--primary-cyan);
       border-radius: 6px;
-      color: #f1f1f1;
+      color: var(--off-white);
       font-family: 'Rajdhani', sans-serif;
       font-size: 1rem;
-      box-sizing: border-box; /* Ensures padding doesn't affect width */
+      box-sizing: border-box;
       transition: all 0.3s ease;
     }
-
     input:focus, select:focus {
       outline: none;
-      border-color: #ff0;
+      border-color: var(--hover-yellow);
       box-shadow: 0 0 8px rgba(255, 255, 0, 0.5);
     }
-
+    .btn {
+      font-family: 'Orbitron', sans-serif;
+      background-color: transparent;
+      color: var(--primary-cyan);
+      border: 1px solid var(--primary-cyan);
+      padding: 1rem 2rem;
+      margin-top: 1rem;
+      cursor: pointer;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: 0.3s;
+      text-transform: uppercase;
+      width: 100%;
+    }
+    .btn:hover {
+      background-color: var(--primary-cyan);
+      color: var(--dark-bg);
+      box-shadow: 0 0 15px var(--primary-cyan);
+    }
+    .btn:disabled {
+        cursor: not-allowed;
+        background-color: #333;
+        border-color: #555;
+        color: #777;
+    }
     fieldset {
-      border: 1px solid #0ff;
+      border: 1px solid #333;
       border-radius: 8px;
       padding: 1.5rem;
       margin-top: 2rem;
       margin-bottom: 2rem;
     }
-
     legend {
       font-family: 'Orbitron', sans-serif;
-      color: #0ff;
+      color: var(--primary-cyan);
       padding: 0 0.5rem;
-      font-size: 1.2rem;
+      font-size: 1.4rem;
     }
-    
-    .checkbox-group {
-      display: flex;
-      align-items: center;
-      margin-top: 1rem;
-    }
-
-    .checkbox-group input {
-      margin-right: 0.75rem;
-    }
-    
-    #form-feedback {
-        margin-top: 1rem;
-        padding: 1rem;
-        border-radius: 6px;
+    .feedback {
         text-align: center;
+        margin-top: 1.5rem;
+        padding: 1rem;
+        border-radius: 8px;
         font-weight: bold;
         display: none; /* Hidden by default */
     }
-
-    .success {
+    .feedback.success {
         background-color: rgba(0, 255, 0, 0.2);
-        border: 1px solid #0f0;
-        color: #0f0;
+        border: 1px solid var(--success-green);
+        color: var(--success-green);
     }
-
-    .error {
+    .feedback.error {
         background-color: rgba(255, 0, 0, 0.2);
-        border: 1px solid #f00;
-        color: #f00;
+        border: 1px solid var(--error-red);
+        color: var(--error-red);
     }
   </style>
 </head>
 <body>
+  <nav>
+    <a href="index.html">
+        <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 60">
+            <defs><linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:rgb(0,255,255);stop-opacity:1" /><stop offset="100%" style="stop-color:rgb(0,128,255);stop-opacity:1" /></linearGradient></defs>
+            <path d="M 10 30 L 30 10 L 50 30 L 30 50 Z" fill="url(#grad1)"/>
+            <text x="65" y="42" font-family="Orbitron, sans-serif" font-size="30" fill="white" font-weight="bold">GOD MODE</text>
+        </svg>
+    </a>
+    <div>
+      <a href="index.html">Home</a>
+      <a href="tournaments.html">Tournaments</a>
+      <a href="teams.html">Teams</a>
+      <a href="players.html">Players</a>
+    </div>
+  </nav>
 
-  <main>
-    <section class="section">
-      <h2>Register for a Tournament</h2>
-      <form id="teamRegForm">
+  <main class="main-container">
+    <h2>Register for a Tournament</h2>
+    <form id="teamRegForm">
 
-        <div class="form-group">
-          <label for="tournament">Select Tournament</label>
-          <select id="tournament" name="tournament" required>
-            <option value="">-- Choose an event --</option>
-            <option value="valorant-nexus">God Mode: Valorant Nexus</option>
-            <option value="dota-eclipse">God Mode: Dota Eclipse</option>
-            <option value="csgo-clash">God Mode: CS:GO Clash</option>
-          </select>
-        </div>
+      <div class="form-group">
+        <label for="tournament">Select Tournament</label>
+        <select id="tournament" name="tournament" required>
+          <option value="">-- Loading Tournaments --</option>
+        </select>
+      </div>
 
-        <div class="form-group">
-          <label for="team-name">Team Name</label>
-          <input type="text" id="team-name" name="team-name" placeholder="Enter your team's official name" required>
-        </div>
-        
+      <div class="form-group">
+        <label for="team-name">Team Name</label>
+        <input type="text" id="team-name" name="team-name" placeholder="Enter your team's official name" required>
+      </div>
 
-        <fieldset>
-          <legend>Player Roster</legend>
-          
-          <h3>Player 1</h3>
-          <div class="form-group">
-            <label for="p1-name">Full Name</label>
-            <input type="text" id="p1-name" name="p1-name" required>
-          </div>
-          <div class="form-group">
-            <label for="p1-email">Email Address</label>
-            <input type="email" id="p1-email" name="p1-email" required>
-          </div>
-          <div class="form-group">
-            <label for="p1-username">In-Game Username</label>
-            <input type="text" id="p1-username" name="p1-username" required>
-          </div>
-          <div class="form-group">
-            <label for="p1-country">Country</label>
-            <input type="text" id="p1-country" name="p1-country" required>
-          </div>
-          
-          <h3>Player 2</h3>
-          <div class="form-group">
-            <label for="p1-name">Full Name</label>
-            <input type="text" id="p1-name" name="p1-name" required>
-          </div>
-          <div class="form-group">
-            <label for="p1-email">Email Address</label>
-            <input type="email" id="p1-email" name="p1-email" required>
-          </div>
-          <div class="form-group">
-            <label for="p1-username">In-Game Username</label>
-            <input type="text" id="p1-username" name="p1-username" required>
-          </div>
-          <div class="form-group">
-            <label for="p1-country">Country</label>
-            <input type="text" id="p1-country" name="p1-country" required>
-          </div>
-          <h3>Player 3</h3>
-          <div class="form-group">
-            <label for="p1-name">Full Name</label>
-            <input type="text" id="p1-name" name="p1-name" required>
-          </div>
-          <div class="form-group">
-            <label for="p1-email">Email Address</label>
-            <input type="email" id="p1-email" name="p1-email" required>
-          </div>
-          <div class="form-group">
-            <label for="p1-username">In-Game Username</label>
-            <input type="text" id="p1-username" name="p1-username" required>
-          </div>
-          <div class="form-group">
-            <label for="p1-country">Country</label>
-            <input type="text" id="p1-country" name="p1-country" required>
-          </div>
-           <h3>Player 4</h3>
-          <div class="form-group">
-            <label for="p1-name">Full Name</label>
-            <input type="text" id="p1-name" name="p1-name" required>
-          </div>
-          <div class="form-group">
-            <label for="p1-email">Email Address</label>
-            <input type="email" id="p1-email" name="p1-email" required>
-          </div>
-          <div class="form-group">
-            <label for="p1-username">In-Game Username</label>
-            <input type="text" id="p1-username" name="p1-username" required>
-          </div>
-          <div class="form-group">
-            <label for="p1-country">Country</label>
-            <input type="text" id="p1-country" name="p1-country" required>
-          </div>
-          <h3>Player 5</h3>
-          <div class="form-group">
-            <label for="p1-name">Full Name</label>
-            <input type="text" id="p1-name" name="p1-name" required>
-          </div>
-          <div class="form-group">
-            <label for="p1-email">Email Address</label>
-            <input type="email" id="p1-email" name="p1-email" required>
-          </div>
-          <div class="form-group">
-            <label for="p1-username">In-Game Username</label>
-            <input type="text" id="p1-username" name="p1-username" required>
-          </div>
-          <div class="form-group">
-            <label for="p1-country">Country</label>
-            <input type="text" id="p1-country" name="p1-country" required>
-          </div>
-          </fieldset>
+      <fieldset>
+        <legend>Player Roster (5 Players)</legend>
+        <div id="player-fields"></div>
+      </fieldset>
 
-        <div class="checkbox-group">
-          <input type="checkbox" id="rules-agreement" name="rules-agreement" required>
-          <label for="rules-agreement">Our team agrees to the tournament rules and regulations.</label>
-        </div>
-
-        <button type="submit" class="btn">Submit Registration</button>
-        
-        <div id="form-feedback"></div>
-
-      </form>
-    </section>
+      <button type="submit" class="btn" id="submitBtn">Register Team</button>
+      
+      <div id="feedback" class="feedback"></div>
+    </form>
   </main>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const form = document.getElementById('teamRegForm');
-      const feedbackEl = document.getElementById('form-feedback');
+      const feedbackEl = document.getElementById('feedback');
+      const submitBtn = document.getElementById('submitBtn');
+      const playerFieldsContainer = document.getElementById('player-fields');
+      const tournamentDropdown = document.getElementById('tournament');
 
-      form.addEventListener('submit', (event) => {
-        event.preventDefault(); // Stop the default browser submission
-        
-        // 1. Collect Form Data
+      async function populateTournaments() {
+          try {
+              // FIX: Point to the working dashboard data endpoint
+              const response = await fetch('http://localhost:3000/api/dashboard-data');
+              if (!response.ok) throw new Error('Failed to fetch tournaments');
+              
+              // FIX: Extract the tournaments array from the response object
+              const data = await response.json();
+              const tournaments = data.tournaments;
+              
+              tournamentDropdown.innerHTML = '<option value="">-- Choose an event --</option>'; // Clear loading message and add default
+              
+              tournaments.forEach(t => {
+                  const option = document.createElement('option');
+                  option.value = t.tournament_id;
+                  option.textContent = t.tournament_name;
+                  tournamentDropdown.appendChild(option);
+              });
+          } catch (error) {
+              console.error("Could not load tournaments for dropdown:", error);
+              tournamentDropdown.innerHTML = '<option value="">Could not load tournaments</option>';
+              tournamentDropdown.disabled = true;
+          }
+      }
+
+      for (let i = 1; i <= 5; i++) {
+        const playerHtml = `
+          <div class="player-group">
+            <h3>Player ${i}</h3>
+            <div class="form-group">
+              <label for="p${i}-name">Player Name</label>
+              <input type="text" id="p${i}-name" name="p${i}-name" required placeholder="Full Name">
+            </div>
+            <div class="form-group">
+              <label for="p${i}-username">In-Game Username</label>
+              <input type="text" id="p${i}-username" name="p${i}-username" required placeholder="Username/IGN">
+            </div>
+            <div class="form-group">
+              <label for="p${i}-country">Country</label>
+              <input type="text" id="p${i}-country" name="p${i}-country" required placeholder="e.g., USA">
+            </div>
+          </div>
+        `;
+        playerFieldsContainer.innerHTML += playerHtml;
+      }
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+        feedbackEl.style.display = 'none';
+
         const formData = new FormData(form);
-        const data = {};
-        const players = [];
-
-        // Basic data and player data extraction
-        for(let i = 1; i <= 5; i++) {
-            const player = {
-                fullName: formData.get(`p${i}-name`),
-                email: formData.get(`p${i}-email`),
-                username: formData.get(`p${i}-username`),
-                country: formData.get(`p${i}-country`),
-            };
-            players.push(player);
+        
+        const registrationData = {
+            tournamentId: formData.get('tournament'),
+            teamName: formData.get('team-name'),
+            players: []
+        };
+        
+        for (let i = 1; i <= 5; i++) {
+          const player = {
+            name: formData.get(`p${i}-name`),
+            username: formData.get(`p${i}-username`),
+            country: formData.get(`p${i}-country`),
+          };
+          if (!player.name || !player.username || !player.country) {
+              alert(`Please fill out all details for Player ${i}.`);
+              submitBtn.disabled = false;
+              submitBtn.textContent = 'Register Team';
+              return;
+          }
+          registrationData.players.push(player);
         }
 
-        data.tournament = formData.get('tournament');
-        data.teamName = formData.get('team-name');
-        data.teamLogo = formData.get('team-logo').name; // Just getting the file name
-        data.agreedToRules = formData.get('rules-agreement') === 'on';
-        data.players = players.filter(p => p.fullName); // Filter out any empty player slots
-        
-        console.log('Structured Form Data:', data);
-        
-        // 2. Simulate Backend Submission
-        feedbackEl.style.display = 'block';
-        feedbackEl.textContent = 'Submitting...';
-
         try {
-            // ===================================================================
-            // TODO: FORWARD TO ORACLE 11g DATABASE
-            //
-            // In a real application, you would use the fetch() API here to
-            // send the 'data' object to a backend endpoint (e.g., a REST API
-            // built with Node.js, Python, Java, or PHP). That endpoint would
-            // then connect to your Oracle 11g database and insert the records
-            // into the respective tables (Teams, Players, Registrations, etc.).
-            //
-            // Example fetch call:
-            /*
-            fetch('https://your-backend-api.com/register', {
+            const response = await fetch('http://localhost:3000/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(data),
-            })
-            .then(response => response.json())
-            .then(result => {
-                console.log('Success:', result);
-                feedbackEl.className = 'success';
-                feedbackEl.textContent = 'Registration successful! A confirmation has been sent.';
-                form.reset();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                feedbackEl.className = 'error';
-                feedbackEl.textContent = 'An error occurred. Please try again later.';
+                body: JSON.stringify(registrationData),
             });
-            */
-            // ===================================================================
 
-            // Simulating a successful submission after 1.5 seconds
-            setTimeout(() => {
-                feedbackEl.className = 'success';
-                feedbackEl.textContent = 'Success! Your registration data has been prepared. (Backend not connected)';
+            const result = await response.json();
+
+            if (response.ok) {
+                feedbackEl.textContent = 'Registration Successful! Your team has been submitted.';
+                feedbackEl.className = 'feedback success';
                 form.reset();
-            }, 1500);
-
+                 // After a successful registration, repopulate the dropdown to ensure it's up to date
+                populateTournaments();
+            } else {
+                throw new Error(result.message || 'An unknown error occurred.');
+            }
         } catch (error) {
-            console.error('Submission error:', error);
-            feedbackEl.className = 'error';
-            feedbackEl.textContent = 'A client-side error occurred. Please check the console.';
+            feedbackEl.textContent = `Error: ${error.message}`;
+            feedbackEl.className = 'feedback error';
+        } finally {
+            feedbackEl.style.display = 'block';
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Register Team';
         }
       });
+
+      // Initialize the page
+      populateTournaments();
     });
   </script>
-
 </body>
 </html>
+

@@ -141,7 +141,7 @@
       border-radius: 10px;
       overflow: hidden;
       border: 1px solid #333;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
       position: relative;
       cursor: pointer;
     }
@@ -155,6 +155,8 @@
     }
     .card:hover {
       transform: translateY(-8px);
+      box-shadow: 0 0 25px var(--primary-cyan);
+      border-color: var(--primary-cyan);
     }
     .card .status-badge {
         position: absolute; top: 10px; right: 10px; padding: 5px 10px; border-radius: 5px; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; color: #000; font-weight: bold;
@@ -208,10 +210,9 @@
         </svg>
     </a>
     <div>
-      <a href="#">Tournaments</a>
-      <a href="#">Teams</a>
-      <a href="#">Players</a>
-      <a href="admin.html">Admin</a>
+      <a href="registrations.html">Registrations</a>
+      <a href="teams.html">Teams</a>
+      <a href="players.html">Players</a>
     </div>
   </nav>
 
@@ -231,8 +232,10 @@
   </section>
 
   <section class="section fade-in-section">
-    <h2>Trending Tournaments</h2>
-    <div id="tournament-cards" class="cards"></div>
+    <h2>Upcoming Tournaments</h2>
+    <div id="tournament-cards" class="cards">
+        <p style="text-align: center; width: 100%;">Loading tournaments...</p>
+    </div>
   </section>
 
   <section class="section fade-in-section">
@@ -242,7 +245,9 @@
 
   <section class="section stats fade-in-section">
     <h2>God Mode Live Stats</h2>
-    <div id="stats-container" class="stats-container"></div>
+    <div id="stats-container" class="stats-container">
+        <p style="text-align: center; width: 100%;">Loading stats...</p>
+    </div>
   </section>
   
   <section class="section hall-of-fame fade-in-section">
@@ -273,14 +278,6 @@
             'images/banner2.png',
             'images/banner3.jpeg'
         ],
-        tournaments: [
-          { name: "God Mode: Valorant Nexus", prizePool: 50000, color: "0ff", game: "Valorant", status: "Live", imageUrl: "images/valorant.png" },
-          { name: "God Mode: Dota Eclipse", prizePool: 100000, color: "ff0", game: "Dota 2", status: "Upcoming", imageUrl: "images/dota.jpeg" },
-          { name: "Apex Predator Series", prizePool: 80000, color: "f00", game: "Apex Legends", status: "Upcoming", imageUrl: "images/apex.jpg" },
-          { name: "League of Legends Rift", prizePool: 120000, color: "00f", game: "LoL", status: "Upcoming", imageUrl: "images/league.jpg" },
-          { name: "Rocket League Gauntlet", prizePool: 40000, color: "fa0", game: "Rocket League", status: "Upcoming", imageUrl: "images/rocket.jpg" },
-          { name: "God Mode: CS:GO Clash", prizePool: 75000, color: "f0f", game: "CS:GO", status: "Upcoming", imageUrl: "images/csgo.png" }
-        ],
         featuredGames: [
             { name: "Valorant", imageUrl: "images/valorant.png" }, 
             { name: "Dota 2", imageUrl: "images/dota.jpeg" }, 
@@ -288,34 +285,77 @@
             { name: "League of Legends", imageUrl: "images/league.jpg" }, 
             { name: "CS:GO", imageUrl: "images/csgo.png" }
         ],
-        liveStats: [
-          { id: "teams-stat", value: 150, label: "Registered Teams" }, { id: "players-stat", value: 750, label: "Active Players" }, { id: "prize-stat", value: 465000, label: "Total Prize Pools", prefix: "$" }
-        ],
         hallOfFame: [
             { title: "Team Phoenix", detail: "Winners: Valorant Nexus 2024", prize: 40000 }, { title: "Player 'Miracle'", detail: "Champion: Dota Eclipse 2024", prize: 20000 }, { title: "Team Liquid", detail: "Winners: CS:GO Clash 2023", prize: 50000 }, { title: "Player 'Faker'", detail: "MVP: LoL Rift 2024", prize: 25000 }
         ]
       };
 
-      function renderTournaments() {
-        const container = document.getElementById('tournament-cards');
-        container.innerHTML = simulatedData.tournaments.map(t => {
-          const formattedPrize = `$${t.prizePool.toLocaleString()}`;
-          const statusBadge = t.status ? `<div class="status-badge status-${t.status.toLowerCase()}">${t.status}</div>` : '';
-          return `
-            <div class="card" style="--glow-color: #${t.color};">
-              ${statusBadge}
-              <img src="${t.imageUrl}" alt="${t.name}" onerror="this.onerror=null;this.src='https://placehold.co/400x160/${t.color}/111?text=${t.game.replace(' ','+')}';">
-              <div class="card-content">
-                <h3>${t.name}</h3>
-                <p>Prize Pool: ${formattedPrize}</p>
-              </div>
-            </div>`;
-        }).join('');
-        // Add dynamic hover effect
-        document.querySelectorAll('.card').forEach(card => {
-            card.addEventListener('mouseenter', () => card.style.boxShadow = `0 0 25px ${card.style.getPropertyValue('--glow-color')}`);
-            card.addEventListener('mouseleave', () => card.style.boxShadow = `0 0 15px rgba(0, 255, 255, 0.2)`);
-        });
+      // --- DYNAMIC DATA FETCHING ---
+      async function fetchHomepageData() {
+          try {
+              const response = await fetch('http://localhost:3000/api/homepage-data');
+              if (!response.ok) throw new Error('Network response was not ok');
+              const data = await response.json();
+              
+              const statsContainer = document.getElementById('stats-container');
+              statsContainer.innerHTML = `
+                  <div class="stat-box"> <h3 id="teams-stat">0+</h3> <p>Registered Teams</p> </div>
+                  <div class="stat-box"> <h3 id="players-stat">0+</h3> <p>Active Players</p> </div>
+                  <div class="stat-box"> <h3 id="prize-stat">$0+</h3> <p>Total Prize Pools</p> </div>
+              `;
+              
+              const tournamentsContainer = document.getElementById('tournament-cards');
+              if (data.tournaments && data.tournaments.length > 0) {
+                  tournamentsContainer.innerHTML = data.tournaments.map(t => {
+                      const formattedPrize = `$${(t.prize_pool || 0).toLocaleString()}`;
+                      let imgName = "tournament_placeholder.jpg"; // Default image
+                      const nameLower = t.tournament_name.toLowerCase();
+
+                      if (nameLower.includes('valorant')) imgName = "valorant.png";
+                      else if (nameLower.includes('dota')) imgName = "dota.jpeg";
+                      else if (nameLower.includes('apex')) imgName = "apex.jpg";
+                      else if (nameLower.includes('league')) imgName = "league.jpg";
+                      else if (nameLower.includes('rocket')) imgName = "rocket.jpg";
+                      else if (nameLower.includes('cs:go')) imgName = "csgo.png";
+                      
+                      return `
+                      <div class="card">
+                          <img src="images/${imgName}" alt="${t.tournament_name}" onerror="this.onerror=null;this.src='https://placehold.co/400x160/1a1a1a/ffffff?text=EVENT';">
+                          <div class="card-content">
+                              <h3>${t.tournament_name}</h3>
+                              <p><strong>Prize Pool:</strong> ${formattedPrize}</p>
+                              <p><strong>Dates:</strong> ${t.start_date} to ${t.end_date}</p>
+                          </div>
+                      </div>`;
+                  }).join('');
+              } else {
+                  tournamentsContainer.innerHTML = '<p style="text-align:center; width:100%;">No upcoming tournaments found.</p>';
+              }
+
+              return data.stats;
+
+          } catch (error) {
+              console.error("Failed to fetch homepage data:", error);
+              document.getElementById('stats-container').innerHTML = '<p style="text-align:center; width:100%;">Could not load stats. Is the server running?</p>';
+              document.getElementById('tournament-cards').innerHTML = '<p style="text-align:center; width:100%;">Could not load tournaments.</p>';
+              return null;
+          }
+      }
+
+      function animateValue(element, start, end, duration, prefix = '', suffix = '+') {
+          if (!element || element.classList.contains('animated')) return;
+          element.classList.add('animated');
+          let startTimestamp = null;
+          const step = (timestamp) => {
+              if (!startTimestamp) startTimestamp = timestamp;
+              const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+              const currentValue = Math.floor(progress * (end - start) + start);
+              element.innerHTML = prefix + currentValue.toLocaleString() + suffix;
+              if (progress < 1) {
+                  window.requestAnimationFrame(step);
+              }
+          };
+          window.requestAnimationFrame(step);
       }
       
       function renderFeaturedGames() {
@@ -329,51 +369,19 @@
           }).join('');
       }
 
-      function renderInitialStats() {
-          const container = document.getElementById('stats-container');
-          container.innerHTML = simulatedData.liveStats.map(stat => `
-            <div class="stat-box">
-                <h3 id="${stat.id}">${stat.prefix || ''}0</h3>
-                <p>${stat.label}</p>
-            </div>`).join('');
-      }
-      
-      function animateStats() {
-        simulatedData.liveStats.forEach(stat => {
-            const el = document.getElementById(stat.id);
-            if (!el || el.classList.contains('animated')) return;
-            el.classList.add('animated');
-            const end = stat.value;
-            const duration = 2000;
-            let current = 0;
-            const increment = end / (duration / 16); 
-
-            function step() {
-                current += increment;
-                if (current >= end) {
-                    el.innerHTML = (stat.prefix || '') + end.toLocaleString() + '+';
-                    return;
-                }
-                el.innerHTML = (stat.prefix || '') + Math.ceil(current).toLocaleString();
-                requestAnimationFrame(step);
-            }
-            step();
-        });
-      }
-
       function renderHallOfFame() {
-        const container = document.getElementById('hall-of-fame-cards');
-        container.innerHTML = simulatedData.hallOfFame.map(entry => {
-            const formattedPrize = `$${entry.prize.toLocaleString()}`;
-            return `
-                <div class="card">
-                    <div class="card-content">
-                        <h3>${entry.title}</h3>
-                        <p>${entry.detail}</p>
-                        <p>Prize: ${formattedPrize}</p>
-                    </div>
-                </div>`;
-        }).join('');
+          const container = document.getElementById('hall-of-fame-cards');
+          container.innerHTML = simulatedData.hallOfFame.map(entry => {
+              const formattedPrize = `$${entry.prize.toLocaleString()}`;
+              return `
+                  <div class="card">
+                      <div class="card-content">
+                          <h3>${entry.title}</h3>
+                          <p>${entry.detail}</p>
+                          <p>Prize: ${formattedPrize}</p>
+                      </div>
+                  </div>`;
+          }).join('');
       }
       
       function startSlideshow() {
@@ -396,26 +404,46 @@
       }
 
       const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            if (entry.target.classList.contains('stats')) {
-                animateStats();
-                observer.unobserve(entry.target); 
-            }
-          }
-        });
+          entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                  entry.target.classList.add('visible');
+                  if (entry.target.classList.contains('stats') && window.liveStats) {
+                      const teamsEl = document.getElementById('teams-stat');
+                      const playersEl = document.getElementById('players-stat');
+                      const prizeEl = document.getElementById('prize-stat');
+                      animateValue(teamsEl, 0, window.liveStats.teams || 0, 2000);
+                      animateValue(playersEl, 0, window.liveStats.players || 0, 2000);
+                      animateValue(prizeEl, 0, window.liveStats.prizes || 0, 2000, '$');
+                      observer.unobserve(entry.target);
+                  }
+              }
+          });
       }, { threshold: 0.2 });
 
       document.querySelectorAll('.fade-in-section').forEach(section => {
-        observer.observe(section);
+          observer.observe(section);
       });
 
-      renderTournaments();
+      // Render static content
       renderFeaturedGames();
-      renderInitialStats();
       renderHallOfFame();
       startSlideshow();
+      
+      // Render dynamic content
+      fetchHomepageData().then(stats => {
+          if(stats) {
+              window.liveStats = stats;
+              const statsSection = document.querySelector('.stats');
+              if (statsSection.classList.contains('visible')) {
+                    const teamsEl = document.getElementById('teams-stat');
+                    const playersEl = document.getElementById('players-stat');
+                    const prizeEl = document.getElementById('prize-stat');
+                    animateValue(teamsEl, 0, window.liveStats.teams || 0, 2000);
+                    animateValue(playersEl, 0, window.liveStats.players || 0, 2000);
+                    animateValue(prizeEl, 0, window.liveStats.prizes || 0, 2000, '$');
+              }
+          }
+      });
     });
   </script>
 </body>

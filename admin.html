@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>God Mode - Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-cyan: #0ff;
+            --hover-yellow: #ff0;
+            --dark-grey: #1a1a1a;
+            --off-white: #f1f1f1;
+            --dark-bg: #0d0d0d;
+            --error-red: #f00;
+        }
+        body { margin: 0; font-family: 'Rajdhani', sans-serif; background-color: var(--dark-bg); color: var(--off-white); padding: 2rem; }
+        h1, h2, h3, h4 { font-family: 'Orbitron', sans-serif; color: var(--primary-cyan); text-shadow: 0 0 8px rgba(0, 255, 255, 0.7); }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .panel { background: var(--dark-grey); border-radius: 12px; box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); padding: 1.5rem; height: 100%; }
+        label { display: block; margin: 1rem 0 0.5rem; font-weight: 500; }
+        input[type="text"], input[type="number"], input[type="date"] { width: 100%; padding: 0.75rem; background-color: #0d0d0d; border: 1px solid var(--primary-cyan); border-radius: 6px; color: var(--off-white); font-family: 'Rajdhani', sans-serif; font-size: 1rem; box-sizing: border-box; }
+        .btn { font-family: 'Orbitron', sans-serif; background-color: transparent; color: var(--primary-cyan); border: 1px solid var(--primary-cyan); padding: 0.8rem 1.5rem; margin-top: 1rem; cursor: pointer; border-radius: 8px; transition: all 0.3s ease; width: 100%; }
+        .btn:hover { background-color: var(--primary-cyan); color: var(--dark-bg); box-shadow: 0 0 15px var(--primary-cyan); }
+        .btn-danger { color: var(--error-red); border-color: var(--error-red); }
+        .btn-danger:hover { background-color: var(--error-red); color: #fff; box-shadow: 0 0 15px var(--error-red); }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #333; }
+        th { font-family: 'Orbitron'; color: var(--hover-yellow); }
+        .actions button { margin: 0 5px; padding: 5px 10px; cursor: pointer; border-radius: 4px; border: 1px solid #555; background-color: #333; color: var(--off-white); }
+        .actions button.btn-danger { color: var(--off-white); background-color: var(--error-red); border-color: var(--error-red);}
+        .tabs { border-bottom: 2px solid #333; margin-bottom: 1rem; }
+        .tab-button { background: none; border: none; color: #888; font-family: 'Orbitron'; padding: 1rem 1.5rem; cursor: pointer; font-size: 1.2rem; }
+        .tab-button.active { color: var(--primary-cyan); border-bottom: 2px solid var(--primary-cyan); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.5s; }
+        .management-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <h1>Admin Dashboard</h1>
+    </div>
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab(event, 'teams')">Manage Teams</button>
+            <button class="tab-button" onclick="openTab(event, 'players')">Manage Players</button>
+            <button class="tab-button" onclick="openTab(event, 'tournaments')">Manage Tournaments</button>
+        </div>
+
+        <!-- Teams Tab -->
+        <div id="teams" class="tab-content active">
+            <div class="management-grid">
+                <div class="panel">
+                    <h3>Team Controls</h3>
+                    <div id="create-team-form">
+                        <h4>Create New Team</h4>
+                        <input type="text" id="team-name-create" placeholder="New team name">
+                        <button class="btn" onclick="handleTeamCreate()">Create</button>
+                    </div>
+                    <div id="edit-team-form" style="display:none;">
+                        <h4>Edit Team</h4>
+                        <input type="hidden" id="team-id-update">
+                        <input type="text" id="team-name-update">
+                        <button class="btn" onclick="handleTeamUpdate()">Save</button>
+                        <button class="btn" style="margin-top: 0.5rem;" onclick="cancelTeamEdit()">Cancel</button>
+                    </div>
+                </div>
+                <div class="panel">
+                    <h3>Current Teams</h3>
+                    <table id="teams-table">
+                        <thead><tr><th>ID</th><th>Name</th><th>Actions</th></tr></thead>
+                        <tbody><tr><td colspan="3" style="text-align:center;">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Players Tab -->
+        <div id="players" class="tab-content">
+             <div class="management-grid">
+                 <div class="panel">
+                    <h3>Player Controls</h3>
+                    <div id="create-player-form">
+                        <h4>Create New Player</h4>
+                        <label for="player-name-create">Player Name</label>
+                        <input type="text" id="player-name-create" placeholder="e.g., John Doe">
+                        <label for="player-username-create">Username</label>
+                        <input type="text" id="player-username-create" placeholder="e.g., Player123">
+                        <label for="player-country-create">Country</label>
+                        <input type="text" id="player-country-create" placeholder="e.g., USA">
+                        <button class="btn" onclick="handlePlayerCreate()">Create</button>
+                    </div>
+                    <div id="edit-player-form" style="display:none;">
+                        <h4>Edit Player</h4>
+                        <input type="hidden" id="player-id-update">
+                        <label for="player-name-update">Player Name</label>
+                        <input type="text" id="player-name-update">
+                        <label for="player-username-update">Username</label>
+                        <input type="text" id="player-username-update">
+                        <label for="player-country-update">Country</label>
+                        <input type="text" id="player-country-update">
+                        <button class="btn" onclick="handlePlayerUpdate()">Save</button>
+                        <button class="btn" style="margin-top: 0.5rem;" onclick="cancelPlayerEdit()">Cancel</button>
+                    </div>
+                </div>
+                <div class="panel">
+                    <h3>Current Players</h3>
+                    <table id="players-table">
+                        <thead><tr><th>ID</th><th>Name</th><th>Username</th><th>Country</th><th>Actions</th></tr></thead>
+                        <tbody><tr><td colspan="5" style="text-align:center;">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tournaments Tab -->
+        <div id="tournaments" class="tab-content">
+            <div class="management-grid">
+                 <div class="panel">
+                    <h3>Tournament Controls</h3>
+                    <div id="create-tournament-form">
+                        <h4>Create New Tournament</h4>
+                        <label for="tournament-name-create">Name</label>
+                        <input type="text" id="tournament-name-create" placeholder="Tournament Name">
+                        <label for="tournament-start-create">Start Date</label>
+                        <input type="date" id="tournament-start-create">
+                        <label for="tournament-end-create">End Date</label>
+                        <input type="date" id="tournament-end-create">
+                        <label for="tournament-prize-create">Prize Pool</label>
+                        <input type="number" id="tournament-prize-create" placeholder="e.g., 50000">
+                        <button class="btn" onclick="handleTournamentCreate()">Create</button>
+                    </div>
+                    <div id="edit-tournament-form" style="display:none;">
+                        <h4>Edit Tournament</h4>
+                        <input type="hidden" id="tournament-id-update">
+                        <label for="tournament-name-update">Name</label>
+                        <input type="text" id="tournament-name-update">
+                        <label for="tournament-start-update">Start Date</label>
+                        <input type="date" id="tournament-start-update">
+                        <label for="tournament-end-update">End Date</label>
+                        <input type="date" id="tournament-end-update">
+                        <label for="tournament-prize-update">Prize Pool</label>
+                        <input type="number" id="tournament-prize-update">
+                        <button class="btn" onclick="handleTournamentUpdate()">Save</button>
+                        <button class="btn" style="margin-top: 0.5rem;" onclick="cancelTournamentEdit()">Cancel</button>
+                    </div>
+                </div>
+                <div class="panel">
+                    <h3>Current Tournaments</h3>
+                    <table id="tournaments-table">
+                        <thead><tr><th>ID</th><th>Name</th><th>Start</th><th>End</th><th>Prize Pool</th><th>Actions</th></tr></thead>
+                        <tbody><tr><td colspan="6" style="text-align:center;">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+
+        // --- Tab Management ---
+        function openTab(evt, tabName) {
+            document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = "none");
+            document.querySelectorAll('.tab-button').forEach(tb => tb.className = tb.className.replace(" active", ""));
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+        
+        // --- Render Functions ---
+        function renderTeams(teams) {
+            const tableBody = document.querySelector("#teams-table tbody");
+            tableBody.innerHTML = '';
+            if (!teams || teams.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No teams found.</td></tr>';
+                return;
+            }
+            teams.forEach(t => {
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${t.team_id}</td>
+                        <td>${t.team_name}</td>
+                        <td class="actions">
+                            <button onclick="showTeamEditForm(${t.team_id},'${t.team_name.replace(/'/g, "\\'")}')">Edit</button>
+                            <button class="btn-danger" onclick="handleTeamDelete(${t.team_id})">Delete</button>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        function renderPlayers(players) {
+            const tableBody = document.querySelector("#players-table tbody");
+            tableBody.innerHTML = '';
+             if (!players || players.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No players found.</td></tr>';
+                return;
+            }
+            players.forEach(p => {
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${p.player_id}</td>
+                        <td>${p.player_name}</td>
+                        <td>${p.username}</td>
+                        <td>${p.country}</td>
+                        <td class="actions">
+                            <button onclick="showPlayerEditForm(${p.player_id},'${p.player_name.replace(/'/g, "\\'")}','${p.username.replace(/'/g, "\\'")}','${p.country.replace(/'/g, "\\'")}')">Edit</button>
+                            <button class="btn-danger" onclick="handlePlayerDelete(${p.player_id})">Delete</button>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        function renderTournaments(tournaments) {
+            const tableBody = document.querySelector("#tournaments-table tbody");
+            tableBody.innerHTML = '';
+             if (!tournaments || tournaments.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No tournaments found.</td></tr>';
+                return;
+            }
+            tournaments.forEach(t => {
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${t.tournament_id}</td>
+                        <td>${t.tournament_name}</td>
+                        <td>${t.start_date}</td>
+                        <td>${t.end_date}</td>
+                        <td>$${t.prize_pool.toLocaleString()}</td>
+                        <td class="actions">
+                            <button onclick="showTournamentEditForm(${t.tournament_id},'${t.tournament_name.replace(/'/g, "\\'")}','${t.start_date}','${t.end_date}',${t.prize_pool})">Edit</button>
+                            <button class="btn-danger" onclick="handleTournamentDelete(${t.tournament_id})">Delete</button>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        // --- Fetch All Data ---
+        async function fetchDashboardData() {
+            try {
+                const response = await fetch(`${API_URL}/api/dashboard-data`);
+                if (!response.ok) throw new Error('Failed to fetch data');
+                const data = await response.json();
+                renderTeams(data.teams);
+                renderPlayers(data.players);
+                renderTournaments(data.tournaments);
+            } catch (error) {
+                console.error("Error loading dashboard:", error);
+                // Optionally show an error message in all tables
+            }
+        }
+        
+        // --- Team Functions ---
+        function showTeamEditForm(id, name) {
+            document.getElementById('create-team-form').style.display = 'none';
+            document.getElementById('edit-team-form').style.display = 'block';
+            document.getElementById('team-id-update').value = id;
+            document.getElementById('team-name-update').value = name;
+        }
+
+        function cancelTeamEdit() {
+            document.getElementById('edit-team-form').style.display = 'none';
+            document.getElementById('create-team-form').style.display = 'block';
+        }
+
+        async function handleTeamCreate() {
+            const team_name = document.getElementById('team-name-create').value;
+            if (!team_name) return alert('Team name is required.');
+            await fetch(`${API_URL}/api/teams`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ team_name })
+            });
+            document.getElementById('team-name-create').value = '';
+            fetchDashboardData();
+        }
+
+        async function handleTeamUpdate() {
+            const id = document.getElementById('team-id-update').value;
+            const team_name = document.getElementById('team-name-update').value;
+            await fetch(`${API_URL}/api/teams/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ team_name })
+            });
+            cancelTeamEdit();
+            fetchDashboardData();
+        }
+
+        async function handleTeamDelete(id) {
+            if (!confirm('Are you sure you want to delete this team?')) return;
+            await fetch(`${API_URL}/api/teams/${id}`, { method: 'DELETE' });
+            fetchDashboardData();
+        }
+
+        // --- Player Functions ---
+        function showPlayerEditForm(id, name, username, country) {
+            document.getElementById('create-player-form').style.display = 'none';
+            document.getElementById('edit-player-form').style.display = 'block';
+            document.getElementById('player-id-update').value = id;
+            document.getElementById('player-name-update').value = name;
+            document.getElementById('player-username-update').value = username;
+            document.getElementById('player-country-update').value = country;
+        }
+
+        function cancelPlayerEdit() {
+            document.getElementById('edit-player-form').style.display = 'none';
+            document.getElementById('create-player-form').style.display = 'block';
+        }
+
+        async function handlePlayerCreate() {
+            const player_name = document.getElementById('player-name-create').value;
+            const username = document.getElementById('player-username-create').value;
+            const country = document.getElementById('player-country-create').value;
+            if (!player_name || !username || !country) return alert('All player fields are required.');
+            await fetch(`${API_URL}/api/players`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ player_name, username, country })
+            });
+            document.getElementById('player-name-create').value = '';
+            document.getElementById('player-username-create').value = '';
+            document.getElementById('player-country-create').value = '';
+            fetchDashboardData();
+        }
+
+        async function handlePlayerUpdate() {
+            const id = document.getElementById('player-id-update').value;
+            const player_name = document.getElementById('player-name-update').value;
+            const username = document.getElementById('player-username-update').value;
+            const country = document.getElementById('player-country-update').value;
+            await fetch(`${API_URL}/api/players/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ player_name, username, country })
+            });
+            cancelPlayerEdit();
+            fetchDashboardData();
+        }
+
+        async function handlePlayerDelete(id) {
+            if (!confirm('Are you sure you want to delete this player?')) return;
+            await fetch(`${API_URL}/api/players/${id}`, { method: 'DELETE' });
+            fetchDashboardData();
+        }
+
+        // --- Tournament Functions ---
+        function showTournamentEditForm(id, name, start, end, prize) {
+            document.getElementById('create-tournament-form').style.display = 'none';
+            document.getElementById('edit-tournament-form').style.display = 'block';
+            document.getElementById('tournament-id-update').value = id;
+            document.getElementById('tournament-name-update').value = name;
+            document.getElementById('tournament-start-update').value = start;
+            document.getElementById('tournament-end-update').value = end;
+            document.getElementById('tournament-prize-update').value = prize;
+        }
+
+        function cancelTournamentEdit() {
+            document.getElementById('edit-tournament-form').style.display = 'none';
+            document.getElementById('create-tournament-form').style.display = 'block';
+        }
+
+        async function handleTournamentCreate() {
+            const tournament_name = document.getElementById('tournament-name-create').value;
+            const start_date = document.getElementById('tournament-start-create').value;
+            const end_date = document.getElementById('tournament-end-create').value;
+            const prize_pool = document.getElementById('tournament-prize-create').value;
+            if (!tournament_name || !start_date || !end_date || !prize_pool) return alert('All tournament fields are required.');
+            await fetch(`${API_URL}/api/tournaments`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tournament_name, start_date, end_date, prize_pool })
+            });
+            document.getElementById('tournament-name-create').value = '';
+            document.getElementById('tournament-start-create').value = '';
+            document.getElementById('tournament-end-create').value = '';
+            document.getElementById('tournament-prize-create').value = '';
+            fetchDashboardData();
+        }
+
+        async function handleTournamentUpdate() {
+            const id = document.getElementById('tournament-id-update').value;
+            const tournament_name = document.getElementById('tournament-name-update').value;
+            const start_date = document.getElementById('tournament-start-update').value;
+            const end_date = document.getElementById('tournament-end-update').value;
+            const prize_pool = document.getElementById('tournament-prize-update').value;
+            await fetch(`${API_URL}/api/tournaments/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tournament_name, start_date, end_date, prize_pool })
+            });
+            cancelTournamentEdit();
+            fetchDashboardData();
+        }
+
+        async function handleTournamentDelete(id) {
+            if (!confirm('Are you sure you want to delete this tournament?')) return;
+            await fetch(`${API_URL}/api/tournaments/${id}`, { method: 'DELETE' });
+            fetchDashboardData();
+        }
+
+        // Initial Load
+        document.addEventListener('DOMContentLoaded', fetchDashboardData);
+    </script>
+</body>
+</html>
+
