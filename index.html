@@ -4,69 +4,132 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>God Mode - Esports Hub</title>
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50,5 L95,27.5 L95,72.5 L50,95 L5,72.5 L5,27.5 Z' fill='%230ff'/%3E%3Ctext x='50' y='62' font-size='40' font-family='Orbitron, sans-serif' fill='white' text-anchor='middle' font-weight='bold'%3EGM%3C/text%3E%3C/svg%3E">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary-cyan: #0ff;
+      --hover-yellow: #ff0;
+      --dark-grey: #1a1a1a;
+      --off-white: #f1f1f1;
+      --dark-bg: #0d0d0d;
+    }
     body {
       margin: 0;
       font-family: 'Rajdhani', sans-serif;
-      background-color: #0d0d0d;
-      color: #f1f1f1;
+      background-color: var(--dark-bg);
+      color: var(--off-white);
     }
     h1, h2, h3 {
       font-family: 'Orbitron', sans-serif;
       letter-spacing: 1px;
     }
     nav {
-      background: #111;
-      padding: 1rem 2rem;
+      background: rgba(17, 17, 17, 0.8);
+      backdrop-filter: blur(10px);
+      padding: 0.5rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 1000;
+      border-bottom: 1px solid #333;
     }
     nav a {
-      color: #0ff;
+      color: var(--primary-cyan);
       margin-left: 20px;
       text-decoration: none;
-      transition: 0.3s;
+      transition: color 0.3s;
+      font-weight: bold;
     }
     nav a:hover {
-      color: #ff0;
+      color: var(--hover-yellow);
+    }
+    .logo-svg {
+        height: 50px;
+        width: auto;
     }
     .hero {
       text-align: center;
-      padding: 5rem 2rem;
-      background: radial-gradient(circle at top, #1a1a1a, #0d0d0d);
+      padding: 8rem 2rem;
+      position: relative;
+      overflow: hidden;
+      height: 70vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .slideshow-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
+    .slide {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transition: opacity 1.5s ease-in-out;
+    }
+    .slide.active {
+        opacity: 1;
+    }
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        padding: 2rem;
+        border-radius: 10px;
     }
     .hero h1 {
       font-size: 3.5rem;
-      color: #0ff;
-      text-shadow: 0 0 10px #0ff;
+      color: var(--primary-cyan);
+      /* REPLACE the existing text-shadow with this one */
+      text-shadow: 3px 2px 8px rgba(0, 0, 0, 0.9), 0 0 10px var(--primary-cyan);
     }
+
     .hero p {
-      font-size: 1.3rem;
-      margin: 1rem 0 2rem;
+    font-size: 1.3rem;
+    margin: 1rem 0 2rem;
+    color: #ccc;
+    /* ADD the line below */
+    text-shadow: 3px 1px 4px rgba(0, 0, 0, 0.9);
     }
+
     .btn {
       font-family: 'Orbitron', sans-serif;
-      background-color: rgb(0, 0, 0);
-      color: #0ff;
-      border: none;
+      background-color: var(--primary-cyan);
+      color: var(--dark-bg);
+      border: 1px solid var(--primary-cyan);
       padding: 1rem 2rem;
       margin: 10px;
       cursor: pointer;
       border-radius: 8px;
       font-weight: bold;
       transition: 0.3s;
+      text-transform: uppercase;
     }
     .btn:hover {
-      background-color:#0ff;
-      color: red;
+      background-color: var(--primary-cyan);
+      color: var(--dark-bg);
+      box-shadow: 0 0 15px var(--primary-cyan);
     }
     .section {
-      padding: 3rem 2rem;
+      padding: 4rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .section h2 {
+        text-align: center;
+        font-size: 2.5rem;
+        color: var(--off-white);
+        margin-bottom: 3rem;
     }
     .cards {
       display: grid;
@@ -74,11 +137,13 @@
       gap: 1.5rem;
     }
     .card {
-      background: #1a1a1a;
+      background: var(--dark-grey);
       border-radius: 10px;
       overflow: hidden;
-      box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
-      transition: transform 0.2s;
+      border: 1px solid #333;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      cursor: pointer;
     }
     .card img {
       width: 100%;
@@ -86,186 +151,273 @@
       object-fit: cover;
     }
     .card-content {
-      padding: 1rem;
+      padding: 1.5rem;
     }
     .card:hover {
-      transform: translateY(-5px);
+      transform: translateY(-8px);
     }
+    .card .status-badge {
+        position: absolute; top: 10px; right: 10px; padding: 5px 10px; border-radius: 5px; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; color: #000; font-weight: bold;
+    }
+    .status-live { background-color: var(--hover-yellow); text-shadow: 0 0 5px #000; }
+    .status-upcoming { background-color: var(--primary-cyan); }
+
     footer {
-      background: #111;
-      text-align: center;
-      padding: 1rem;
-      margin-top: 2rem;
-      font-size: 0.9rem;
-      color: #aaa;
+      background: #111; text-align: center; padding: 1.5rem; margin-top: 2rem; font-size: 0.9rem; color: #aaa; border-top: 1px solid #333;
     }
-    .rules, .hall-of-fame, .sponsors, .stats {
-      margin-top: 3rem;
-    }
-    .stats-container {
-      display: flex;
-      justify-content: space-around;
-      flex-wrap: wrap;
-      text-align: center;
+    .stats-container, .featured-games-container {
+      display: flex; justify-content: space-around; flex-wrap: wrap; text-align: center; gap: 1rem;
     }
     .stat-box {
-      margin: 1rem;
-      background: #1a1a1a;
-      padding: 1.5rem;
-      border-radius: 12px;
-      min-width: 180px;
-      box-shadow: 0 0 10px rgba(255,255,0,0.2);
+      margin: 1rem; background: var(--dark-grey); padding: 2rem; border-radius: 12px; min-width: 220px; border: 1px solid #333;
+    }
+    .stat-box h3 { font-size: 2.5rem; color: var(--hover-yellow); margin: 0 0 0.5rem 0;}
+    .game-circle {
+        display: flex; flex-direction: column; align-items: center; gap: 1rem;
+    }
+    .game-circle img {
+        width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #555; transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s; cursor: pointer;
+    }
+    .game-circle img:hover {
+        transform: scale(1.1); box-shadow: 0 0 25px var(--primary-cyan); border-color: var(--primary-cyan);
     }
     .sponsors-logos {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 2rem;
-      flex-wrap: wrap;
+      display: flex; justify-content: center; align-items: center; gap: 2rem; flex-wrap: wrap;
     }
-
     .sponsors-logos img {
-      max-height: 80px;
-      width: auto;
-      opacity: 0.9;
-      transition: 0.3s;
-      object-fit: contain;
-      background: #fff; /* ensures visibility for transparent logos */
-      border-radius: 4px;
-      padding: 1px;
+      max-height: 80px; width: auto; opacity: 0.9; transition: 0.3s; object-fit: contain; background: #fff; border-radius: 4px; padding: 1px;
     }
-
     .sponsors-logos img:hover {
-      cursor: pointer;
-      opacity: 1; /* makes it brighter on hover */
-      transform: scale(1.1); /* smooth zoom effect */
+      cursor: pointer; opacity: 1; transform: scale(1.1);
     }
-
+    .fade-in-section {
+      opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+    .fade-in-section.visible {
+      opacity: 1; transform: translateY(0);
+    }
   </style>
 </head>
 <body>
-  <!-- Navbar -->
   <nav>
-    <div class="logo"><a href="index.html">⚡ God Mode</a></div>
+    <a href="index.html">
+        <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 60">
+            <defs><linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:rgb(0,255,255);stop-opacity:1" /><stop offset="100%" style="stop-color:rgb(0,128,255);stop-opacity:1" /></linearGradient></defs>
+            <path d="M 10 30 L 30 10 L 50 30 L 30 50 Z" fill="url(#grad1)"/>
+            <text x="65" y="42" font-family="Orbitron, sans-serif" font-size="30" fill="white" font-weight="bold">GOD MODE</text>
+        </svg>
+    </a>
     <div>
-      <a href="tournaments.html">Tournaments</a>
-      <a href="teams.html">Teams</a>
-      <a href="players.html">Players</a>
-      <a href="login.html">Login</a>
+      <a href="#">Tournaments</a>
+      <a href="#">Teams</a>
+      <a href="#">Players</a>
+      <a href="admin.html">Admin</a>
     </div>
   </nav>
 
-  <!-- Hero Section -->
   <section class="hero">
-    <h1>Welcome to God Mode</h1>
-    <p>The ultimate arena for global esports champions.</p>
-    <button class="btn" onclick="window.location.href='register.html'">
-          Register Now
-    </button>
-
-    <button class="btn">Sign In to Explore</button>
+      <div class="slideshow-container">
+          <div class="slide"></div>
+          <div class="slide"></div>
+          <div class="slide"></div>
+      </div>
+      <div class="hero-content">
+        <h1>Welcome to God Mode</h1>
+        <p>The ultimate arena for global esports champions.</p>
+        <button class="btn" onclick="window.location.href='register.html'">
+              Register Your Team
+        </button>
+      </div>
   </section>
 
-  <!-- Trending Tournaments -->
-  <section class="section">
-    <h2>🔥 Trending Tournaments</h2>
-    <div class="cards">
-      <div class="card">
-        <img src="https://via.placeholder.com/400x160/0ff/111?text=Valorant+Nexus" alt="Tournament">
-        <div class="card-content">
-          <h3>God Mode: Valorant Nexus</h3>
-          <p>Prize Pool: $50,000</p>
-        </div>
-      </div>
-      <div class="card">
-        <img src="https://via.placeholder.com/400x160/ff0/111?text=Dota+Eclipse" alt="Tournament">
-        <div class="card-content">
-          <h3>God Mode: Dota Eclipse</h3>
-          <p>Prize Pool: $100,000</p>
-        </div>
-      </div>
-      <div class="card">
-        <img src="https://via.placeholder.com/400x160/f0f/111?text=CSGO+Clash" alt="Tournament">
-        <div class="card-content">
-          <h3>God Mode: CS:GO Clash</h3>
-          <p>Prize Pool: $75,000</p>
-        </div>
-      </div>
-    </div>
+  <section class="section fade-in-section">
+    <h2>Trending Tournaments</h2>
+    <div id="tournament-cards" class="cards"></div>
   </section>
 
-  <!-- Rules & Regulations -->
-  <section class="section rules">
-    <h2>📜 Rules & Regulations</h2>
-    <h3>Main Tournament Registration</h3>
-    <ul>
-      <li>Teams must have 5 registered players.</li>
-      <li>Valid ID and age verification required.</li>
-      <li>Only one team registration per organization.</li>
-    </ul>
-    <h3>Mini-Tournaments</h3>
-    <ul>
-      <li>Follow game-specific rules (e.g., best-of-three).</li>
-      <li>Strict no-cheating/third-party tools policy.</li>
-      <li>Respect officials and referees' decisions.</li>
-    </ul>
+  <section class="section fade-in-section">
+      <h2>Featured Games</h2>
+      <div id="featured-games-container" class="featured-games-container"></div>
   </section>
 
-  <!-- Hall of Fame -->
-  <section class="section hall-of-fame">
-    <h2>🏆 Hall of Fame</h2>
-    <div class="cards">
-      <div class="card">
-        <div class="card-content">
-          <h3>Team Phoenix</h3>
-          <p>Won: God Mode Valorant 2024</p>
-          <p>Prize: $40,000</p>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-content">
-          <h3>PlayerX</h3>
-          <p>Champion: Dota Eclipse 2024</p>
-          <p>Prize: $20,000</p>
-        </div>
-      </div>
-    </div>
+  <section class="section stats fade-in-section">
+    <h2>God Mode Live Stats</h2>
+    <div id="stats-container" class="stats-container"></div>
+  </section>
+  
+  <section class="section hall-of-fame fade-in-section">
+    <h2>Hall of Fame</h2>
+    <div id="hall-of-fame-cards" class="cards"></div>
   </section>
 
-  <!-- Live Stats -->
-  <section class="section stats">
-    <h2>📊 God Mode Live Stats</h2>
-    <div class="stats-container">
-      <div class="stat-box">
-        <h3>120+</h3>
-        <p>Registered Teams</p>
-      </div>
-      <div class="stat-box">
-        <h3>500+</h3>
-        <p>Players Competing</p>
-      </div>
-      <div class="stat-box">
-        <h3>$250,000+</h3>
-        <p>Total Prize Pools</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Sponsors -->
-  <section class="section sponsors">
+  <section class="section sponsors fade-in-section">
     <h2>Our Sponsors</h2>
     <div class="sponsors-logos">
-      <img src="images/nvidia.jpg" alt="NVIDIA">
-      <img src="images/amd.png" alt="AMD">
-      <img src="images/steam.png" alt="Steam">
-      <img src="images/twitch.jpg" alt="Twitch">
-      <img src="images/discord.png" alt="Discord">
+      <img src="images/nvidia.jpg" alt="NVIDIA" onerror="this.onerror=null;this.src='https://placehold.co/150x80/ffffff/000000?text=NVIDIA';">
+      <img src="images/amd.png" alt="AMD" onerror="this.onerror=null;this.src='https://placehold.co/150x80/ffffff/000000?text=AMD';">
+      <img src="images/steam.png" alt="Steam" onerror="this.onerror=null;this.src='https://placehold.co/150x80/ffffff/000000?text=Steam';">
+      <img src="images/twitch.jpg" alt="Twitch" onerror="this.onerror=null;this.src='https://placehold.co/150x80/ffffff/000000?text=Twitch';">
+      <img src="images/discord.png" alt="Discord" onerror="this.onerror=null;this.src='https://placehold.co/150x80/ffffff/000000?text=Discord';">
     </div>
   </section>
 
-  <!-- Footer -->
   <footer>
-    <p>© 2025 God Mode Esports Hub | CodingGods</p>
+    <p>&copy; 2025 God Mode Esports Hub | CodingGods</p>
   </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const simulatedData = {
+        slideshowImages: [
+            'images/banner1.png',
+            'images/banner2.png',
+            'images/banner3.jpeg'
+        ],
+        tournaments: [
+          { name: "God Mode: Valorant Nexus", prizePool: 50000, color: "0ff", game: "Valorant", status: "Live", imageUrl: "images/valorant.png" },
+          { name: "God Mode: Dota Eclipse", prizePool: 100000, color: "ff0", game: "Dota 2", status: "Upcoming", imageUrl: "images/dota.jpeg" },
+          { name: "Apex Predator Series", prizePool: 80000, color: "f00", game: "Apex Legends", status: "Upcoming", imageUrl: "images/apex.jpg" },
+          { name: "League of Legends Rift", prizePool: 120000, color: "00f", game: "LoL", status: "Upcoming", imageUrl: "images/league.jpg" },
+          { name: "Rocket League Gauntlet", prizePool: 40000, color: "fa0", game: "Rocket League", status: "Upcoming", imageUrl: "images/rocket.jpg" },
+          { name: "God Mode: CS:GO Clash", prizePool: 75000, color: "f0f", game: "CS:GO", status: "Upcoming", imageUrl: "images/csgo.png" }
+        ],
+        featuredGames: [
+            { name: "Valorant", imageUrl: "images/valorant.png" }, 
+            { name: "Dota 2", imageUrl: "images/dota.jpeg" }, 
+            { name: "Apex Legends", imageUrl: "images/apex.jpg" }, 
+            { name: "League of Legends", imageUrl: "images/league.jpg" }, 
+            { name: "CS:GO", imageUrl: "images/csgo.png" }
+        ],
+        liveStats: [
+          { id: "teams-stat", value: 150, label: "Registered Teams" }, { id: "players-stat", value: 750, label: "Active Players" }, { id: "prize-stat", value: 465000, label: "Total Prize Pools", prefix: "$" }
+        ],
+        hallOfFame: [
+            { title: "Team Phoenix", detail: "Winners: Valorant Nexus 2024", prize: 40000 }, { title: "Player 'Miracle'", detail: "Champion: Dota Eclipse 2024", prize: 20000 }, { title: "Team Liquid", detail: "Winners: CS:GO Clash 2023", prize: 50000 }, { title: "Player 'Faker'", detail: "MVP: LoL Rift 2024", prize: 25000 }
+        ]
+      };
+
+      function renderTournaments() {
+        const container = document.getElementById('tournament-cards');
+        container.innerHTML = simulatedData.tournaments.map(t => {
+          const formattedPrize = `$${t.prizePool.toLocaleString()}`;
+          const statusBadge = t.status ? `<div class="status-badge status-${t.status.toLowerCase()}">${t.status}</div>` : '';
+          return `
+            <div class="card" style="--glow-color: #${t.color};">
+              ${statusBadge}
+              <img src="${t.imageUrl}" alt="${t.name}" onerror="this.onerror=null;this.src='https://placehold.co/400x160/${t.color}/111?text=${t.game.replace(' ','+')}';">
+              <div class="card-content">
+                <h3>${t.name}</h3>
+                <p>Prize Pool: ${formattedPrize}</p>
+              </div>
+            </div>`;
+        }).join('');
+        // Add dynamic hover effect
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mouseenter', () => card.style.boxShadow = `0 0 25px ${card.style.getPropertyValue('--glow-color')}`);
+            card.addEventListener('mouseleave', () => card.style.boxShadow = `0 0 15px rgba(0, 255, 255, 0.2)`);
+        });
+      }
+      
+      function renderFeaturedGames() {
+          const container = document.getElementById('featured-games-container');
+          container.innerHTML = simulatedData.featuredGames.map(game => {
+              return `
+                <div class="game-circle">
+                    <img src="${game.imageUrl}" alt="${game.name}" onerror="this.onerror=null;this.src='https://placehold.co/200x200/ccc/111?text=Game';">
+                    <h3>${game.name}</h3>
+                </div>`;
+          }).join('');
+      }
+
+      function renderInitialStats() {
+          const container = document.getElementById('stats-container');
+          container.innerHTML = simulatedData.liveStats.map(stat => `
+            <div class="stat-box">
+                <h3 id="${stat.id}">${stat.prefix || ''}0</h3>
+                <p>${stat.label}</p>
+            </div>`).join('');
+      }
+      
+      function animateStats() {
+        simulatedData.liveStats.forEach(stat => {
+            const el = document.getElementById(stat.id);
+            if (!el || el.classList.contains('animated')) return;
+            el.classList.add('animated');
+            const end = stat.value;
+            const duration = 2000;
+            let current = 0;
+            const increment = end / (duration / 16); 
+
+            function step() {
+                current += increment;
+                if (current >= end) {
+                    el.innerHTML = (stat.prefix || '') + end.toLocaleString() + '+';
+                    return;
+                }
+                el.innerHTML = (stat.prefix || '') + Math.ceil(current).toLocaleString();
+                requestAnimationFrame(step);
+            }
+            step();
+        });
+      }
+
+      function renderHallOfFame() {
+        const container = document.getElementById('hall-of-fame-cards');
+        container.innerHTML = simulatedData.hallOfFame.map(entry => {
+            const formattedPrize = `$${entry.prize.toLocaleString()}`;
+            return `
+                <div class="card">
+                    <div class="card-content">
+                        <h3>${entry.title}</h3>
+                        <p>${entry.detail}</p>
+                        <p>Prize: ${formattedPrize}</p>
+                    </div>
+                </div>`;
+        }).join('');
+      }
+      
+      function startSlideshow() {
+          const slides = document.querySelectorAll('.slide');
+          simulatedData.slideshowImages.forEach((imgUrl, index) => {
+              if(slides[index]) {
+                  slides[index].style.backgroundImage = `url('${imgUrl}')`;
+              }
+          });
+          
+          let currentSlide = 0;
+          if (slides.length > 0) {
+              slides[currentSlide].classList.add('active');
+              setInterval(() => {
+                  slides[currentSlide].classList.remove('active');
+                  currentSlide = (currentSlide + 1) % slides.length;
+                  slides[currentSlide].classList.add('active');
+              }, 5000); // Change slide every 5 seconds
+          }
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            if (entry.target.classList.contains('stats')) {
+                animateStats();
+                observer.unobserve(entry.target); 
+            }
+          }
+        });
+      }, { threshold: 0.2 });
+
+      document.querySelectorAll('.fade-in-section').forEach(section => {
+        observer.observe(section);
+      });
+
+      renderTournaments();
+      renderFeaturedGames();
+      renderInitialStats();
+      renderHallOfFame();
+      startSlideshow();
+    });
+  </script>
 </body>
 </html>
+
