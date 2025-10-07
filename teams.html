@@ -17,9 +17,9 @@
         .section { padding: 4rem 2rem; max-width: 1200px; margin: 0 auto; }
         .section h2 { text-align: center; font-size: 2.5rem; color: var(--off-white); margin-bottom: 3rem; }
         .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
-        .team-card { background: var(--dark-grey); padding: 1.5rem; border-radius: 10px; text-align: center; border: 1px solid #333; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
+        .team-card { background: var(--dark-grey); padding: 1.5rem; border-radius: 10px; text-align: center; border: 1px solid #333; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; text-decoration: none; color: inherit;}
         .team-card:hover { transform: translateY(-8px); box-shadow: 0 0 25px var(--primary-cyan); border-color: var(--primary-cyan); }
-        footer { background: #111; text-align: center; padding: 1.5rem; margin-top: 2rem; font-size: 0.9rem; color: #aaa; border-top: 1px solid #333; }
+        footer { background: #111; text-align: center; padding: 1.5rem; margin-top: 2rem; font-size: 0.9rem; color: #aaa; border-top: 1px solid #333; position: fixed; bottom: 0; width: 100%;}
     </style>
 </head>
 <body>
@@ -52,7 +52,11 @@
                 const teams = await response.json();
                 const container = document.getElementById('teams-grid');
                 if (teams.length > 0) {
-                    container.innerHTML = teams.map(team => `<div class="team-card"><h3>${team.team_name}</h3></div>`).join('');
+                    container.innerHTML = teams.map(team => `
+                        <a href="players.html?team=${encodeURIComponent(team.team_name)}" class="team-card">
+                            <h3>${team.team_name}</h3>
+                        </a>
+                    `).join('');
                 } else {
                     container.innerHTML = '<p style="text-align:center; grid-column: 1 / -1;">No teams found.</p>';
                 }

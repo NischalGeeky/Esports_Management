@@ -148,8 +148,14 @@ app.get('/api/players-public', async (req, res) => {
     let connection;
     try {
         connection = await oracledb.getConnection(dbConfig);
-        const result = await connection.execute(`SELECT player_id, player_name, username, country FROM Player ORDER BY player_name ASC`);
-        res.json(result.rows.map(row => ({ player_id: row[0], player_name: row[1], username: row[2], country: row[3] })));
+        const result = await connection.execute(`
+            SELECT p.player_id, p.player_name, p.username, p.country, t.team_name 
+            FROM Player p
+            LEFT JOIN Player_Team pt ON p.player_id = pt.player_id
+            LEFT JOIN Team t ON pt.team_id = t.team_id
+            ORDER BY p.player_name ASC
+        `);
+        res.json(result.rows.map(row => ({ player_id: row[0], player_name: row[1], username: row[2], country: row[3], team_name: row[4] })));
     } catch (err) {
         console.error("Error fetching players:", err);
         res.status(500).json({ message: "Failed to fetch players." });
@@ -158,7 +164,6 @@ app.get('/api/players-public', async (req, res) => {
     }
 });
 
-// NEW ENDPOINT FOR REGISTRATION DROPDOWN
 app.get('/api/tournaments-list', async (req, res) => {
     let connection;
     try {
@@ -185,13 +190,19 @@ app.get('/api/dashboard-data', async (req, res) => {
         
         const [teamsResult, playersResult, tournamentsResult] = await Promise.all([
             connection.execute(`SELECT team_id, team_name FROM Team ORDER BY team_id ASC`),
-            connection.execute(`SELECT player_id, player_name, username, country FROM Player ORDER BY player_id ASC`),
+            connection.execute(`
+                SELECT p.player_id, p.player_name, p.username, p.country, t.team_id, t.team_name 
+                FROM Player p
+                LEFT JOIN Player_Team pt ON p.player_id = pt.player_id
+                LEFT JOIN Team t ON pt.team_id = t.team_id
+                ORDER BY p.player_id ASC
+            `),
             connection.execute(`SELECT tournament_id, tournament_name, TO_CHAR(start_date, 'YYYY-MM-DD') AS start_date, TO_CHAR(end_date, 'YYYY-MM-DD') AS end_date, prize_pool FROM Tournament ORDER BY tournament_id ASC`)
         ]);
 
         const dashboardData = {
             teams: teamsResult.rows.map(row => ({ team_id: row[0], team_name: row[1] })),
-            players: playersResult.rows.map(row => ({ player_id: row[0], player_name: row[1], username: row[2], country: row[3] })),
+            players: playersResult.rows.map(row => ({ player_id: row[0], player_name: row[1], username: row[2], country: row[3], team_id: row[4], team_name: row[5] })),
             tournaments: tournamentsResult.rows.map(row => ({ tournament_id: row[0], tournament_name: row[1], start_date: row[2], end_date: row[3], prize_pool: row[4] }))
         };
 
@@ -242,26 +253,70 @@ app.delete('/api/teams/:id', async (req, res) => {
 
 // Player Management
 app.post('/api/players', async (req, res) => {
-    const { player_name, username, country } = req.body;
+    const { player_name, username, country, team_id } = req.body;
     let connection;
     try {
         connection = await oracledb.getConnection(dbConfig);
-        await connection.execute(`INSERT INTO Player (player_id, player_name, username, country) VALUES (player_seq.NEXTVAL, :player_name, :username, :country)`, { player_name, username, country }, { autoCommit: true });
+        const playerResult = await connection.execute(
+            `INSERT INTO Player (player_id, player_name, username, country) VALUES (player_seq.NEXTVAL, :player_name, :username, :country) RETURNING player_id INTO :newPlayerId`,
+            { player_name, username, country, newPlayerId: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT } },
+            { autoCommit: false }
+        );
+        
+        const newPlayerId = playerResult.outBinds.newPlayerId[0];
+
+        if (team_id) {
+            await connection.execute(
+                `INSERT INTO Player_Team (player_id, team_id) VALUES (:newPlayerId, :team_id)`,
+                { newPlayerId, team_id },
+                { autoCommit: false }
+            );
+        }
+        
+        await connection.commit();
         res.status(201).json({ message: 'Player created.' });
-    } catch(err) { res.status(500).send({ message: "Failed to create player." }); } 
+    } catch(err) { 
+        if(connection) await connection.rollback();
+        res.status(500).send({ message: "Failed to create player." }); 
+    } 
     finally { if (connection) try { await connection.close(); } catch(e) { console.error(e); } }
 });
+
 app.put('/api/players/:id', async (req, res) => {
     const { id } = req.params;
-    const { player_name, username, country } = req.body;
+    const { player_name, username, country, team_id } = req.body;
     let connection;
     try {
         connection = await oracledb.getConnection(dbConfig);
-        await connection.execute(`UPDATE Player SET player_name = :player_name, username = :username, country = :country WHERE player_id = :id`, { player_name, username, country, id }, { autoCommit: true });
+        await connection.execute(
+            `UPDATE Player SET player_name = :player_name, username = :username, country = :country WHERE player_id = :id`, 
+            { player_name, username, country, id }, 
+            { autoCommit: false }
+        );
+
+        await connection.execute(
+            `DELETE FROM Player_Team WHERE player_id = :id`,
+            { id },
+            { autoCommit: false }
+        );
+
+        if (team_id) {
+            await connection.execute(
+                `INSERT INTO Player_Team (player_id, team_id) VALUES (:id, :team_id)`,
+                { id, team_id },
+                { autoCommit: false }
+            );
+        }
+
+        await connection.commit();
         res.json({ message: 'Player updated.' });
-    } catch(err) { res.status(500).send({ message: "Failed to update player." }); } 
+    } catch(err) { 
+        if(connection) await connection.rollback();
+        res.status(500).send({ message: "Failed to update player." }); 
+    } 
     finally { if (connection) try { await connection.close(); } catch(e) { console.error(e); } }
 });
+
 app.delete('/api/players/:id', async (req, res) => {
     const { id } = req.params;
     let connection;

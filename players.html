@@ -7,7 +7,7 @@
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50,5 L95,27.5 L95,72.5 L50,95 L5,72.5 L5,27.5 Z' fill='%230ff'/%3E%3Ctext x='50' y='62' font-size='40' font-family='Orbitron, sans-serif' fill='white' text-anchor='middle' font-weight='bold'%3EGM%3C/text%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary-cyan: #0ff; --hover-yellow: #ff0; --dark-grey: #1a1a1a; --off-white: #f1f1f1; --dark-bg: #0d0d0d; }
+        :root { --primary-cyan: #0ff; --hover-yellow: #ff0; --dark-grey: #1a1a1a; --off-white: #f1f1f1; --dark-bg: #0d0d0d; --highlight-green: #0f0; }
         body { margin: 0; font-family: 'Rajdhani', sans-serif; background-color: var(--dark-bg); color: var(--off-white); }
         h2 { font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
         nav { background: rgba(17, 17, 17, 0.8); backdrop-filter: blur(10px); padding: 0.5rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #333; }
@@ -20,7 +20,12 @@
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #333; }
         th { font-family: 'Orbitron'; color: var(--hover-yellow); }
-        footer { background: #111; text-align: center; padding: 1.5rem; margin-top: 2rem; font-size: 0.9rem; color: #aaa; border-top: 1px solid #333;}
+        tr.highlight {
+            background-color: rgba(0, 255, 0, 0.1);
+            color: var(--highlight-green);
+            border-left: 3px solid var(--highlight-green);
+        }
+        footer { background: #111; text-align: center; padding: 1.5rem; margin-top: 2rem; font-size: 0.9rem; color: #aaa; border-top: 1px solid #333; }
     </style>
 </head>
 <body>
@@ -39,36 +44,47 @@
         </div>
     </nav>
     <section class="section">
-        <h2>Registered Players</h2>
+        <h2 id="page-title">Registered Players</h2>
         <div class="table-container">
             <table id="players-table">
-                <thead><tr><th>ID</th><th>Name</th><th>Username</th><th>Country</th></tr></thead>
-                <tbody><tr><td colspan="4" style="text-align:center;">Loading...</td></tr></tbody>
+                <thead><tr><th>ID</th><th>Name</th><th>Username</th><th>Country</th><th>Team</th></tr></thead>
+                <tbody><tr><td colspan="5" style="text-align:center;">Loading...</td></tr></tbody>
             </table>
         </div>
     </section>
     <footer><p>&copy; 2025 God Mode Esports Hub | CodingGods</p></footer>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            const teamToHighlight = params.get('team');
+            
+            if (teamToHighlight) {
+                document.getElementById('page-title').textContent = `Players in ${teamToHighlight}`;
+            }
+
             try {
                 const response = await fetch('http://localhost:3000/api/players-public');
                 if(!response.ok) throw new Error('Failed to fetch from server.');
                 const players = await response.json();
                 const container = document.querySelector('#players-table tbody');
                 if (players.length > 0) {
-                    container.innerHTML = players.map(p => `
-                        <tr>
+                    container.innerHTML = players.map(p => {
+                        const highlightClass = (p.team_name === teamToHighlight) ? 'highlight' : '';
+                        return `
+                        <tr class="${highlightClass}">
                             <td>${p.player_id}</td>
                             <td>${p.player_name}</td>
                             <td>${p.username}</td>
                             <td>${p.country}</td>
+                            <td>${p.team_name || 'Unassigned'}</td>
                         </tr>
-                    `).join('');
+                        `
+                    }).join('');
                 } else {
-                    container.innerHTML = '<tr><td colspan="4" style="text-align:center;">No players found.</td></tr>';
+                    container.innerHTML = '<tr><td colspan="5" style="text-align:center;">No players found.</td></tr>';
                 }
             } catch (error) {
-                document.querySelector('#players-table tbody').innerHTML = '<tr><td colspan="4" style="text-align:center;">Failed to load players. Is the server running?</td></tr>';
+                document.querySelector('#players-table tbody').innerHTML = '<tr><td colspan="5" style="text-align:center;">Failed to load players. Is the server running?</td></tr>';
                 console.error(error);
             }
         });

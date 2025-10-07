@@ -19,7 +19,7 @@
         .container { max-width: 1400px; margin: 0 auto; }
         .panel { background: var(--dark-grey); border-radius: 12px; box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); padding: 1.5rem; height: 100%; }
         label { display: block; margin: 1rem 0 0.5rem; font-weight: 500; }
-        input[type="text"], input[type="number"], input[type="date"] { width: 100%; padding: 0.75rem; background-color: #0d0d0d; border: 1px solid var(--primary-cyan); border-radius: 6px; color: var(--off-white); font-family: 'Rajdhani', sans-serif; font-size: 1rem; box-sizing: border-box; }
+        input[type="text"], input[type="number"], input[type="date"], select { width: 100%; padding: 0.75rem; background-color: #0d0d0d; border: 1px solid var(--primary-cyan); border-radius: 6px; color: var(--off-white); font-family: 'Rajdhani', sans-serif; font-size: 1rem; box-sizing: border-box; }
         .btn { font-family: 'Orbitron', sans-serif; background-color: transparent; color: var(--primary-cyan); border: 1px solid var(--primary-cyan); padding: 0.8rem 1.5rem; margin-top: 1rem; cursor: pointer; border-radius: 8px; transition: all 0.3s ease; width: 100%; }
         .btn:hover { background-color: var(--primary-cyan); color: var(--dark-bg); box-shadow: 0 0 15px var(--primary-cyan); }
         .btn-danger { color: var(--error-red); border-color: var(--error-red); }
@@ -90,6 +90,8 @@
                         <input type="text" id="player-username-create" placeholder="e.g., Player123">
                         <label for="player-country-create">Country</label>
                         <input type="text" id="player-country-create" placeholder="e.g., USA">
+                        <label for="player-team-create">Assign to Team (Optional)</label>
+                        <select id="player-team-create"></select>
                         <button class="btn" onclick="handlePlayerCreate()">Create</button>
                     </div>
                     <div id="edit-player-form" style="display:none;">
@@ -101,6 +103,8 @@
                         <input type="text" id="player-username-update">
                         <label for="player-country-update">Country</label>
                         <input type="text" id="player-country-update">
+                        <label for="player-team-update">Assign to Team</label>
+                        <select id="player-team-update"></select>
                         <button class="btn" onclick="handlePlayerUpdate()">Save</button>
                         <button class="btn" style="margin-top: 0.5rem;" onclick="cancelPlayerEdit()">Cancel</button>
                     </div>
@@ -108,8 +112,8 @@
                 <div class="panel">
                     <h3>Current Players</h3>
                     <table id="players-table">
-                        <thead><tr><th>ID</th><th>Name</th><th>Username</th><th>Country</th><th>Actions</th></tr></thead>
-                        <tbody><tr><td colspan="5" style="text-align:center;">Loading...</td></tr></tbody>
+                        <thead><tr><th>ID</th><th>Name</th><th>Username</th><th>Country</th><th>Team</th><th>Actions</th></tr></thead>
+                        <tbody><tr><td colspan="6" style="text-align:center;">Loading...</td></tr></tbody>
                     </table>
                 </div>
             </div>
@@ -194,7 +198,7 @@
             const tableBody = document.querySelector("#players-table tbody");
             tableBody.innerHTML = '';
              if (!players || players.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No players found.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No players found.</td></tr>';
                 return;
             }
             players.forEach(p => {
@@ -204,8 +208,9 @@
                         <td>${p.player_name}</td>
                         <td>${p.username}</td>
                         <td>${p.country}</td>
+                        <td>${p.team_name || 'Unassigned'}</td>
                         <td class="actions">
-                            <button onclick="showPlayerEditForm(${p.player_id},'${p.player_name.replace(/'/g, "\\'")}','${p.username.replace(/'/g, "\\'")}','${p.country.replace(/'/g, "\\'")}')">Edit</button>
+                            <button onclick="showPlayerEditForm(${p.player_id},'${p.player_name.replace(/'/g, "\\'")}','${p.username.replace(/'/g, "\\'")}','${p.country.replace(/'/g, "\\'")}', ${p.team_id || null})">Edit</button>
                             <button class="btn-danger" onclick="handlePlayerDelete(${p.player_id})">Delete</button>
                         </td>
                     </tr>`;
@@ -226,12 +231,24 @@
                         <td>${t.tournament_name}</td>
                         <td>${t.start_date}</td>
                         <td>${t.end_date}</td>
-                        <td>$${t.prize_pool.toLocaleString()}</td>
+                        <td>$${(t.prize_pool || 0).toLocaleString()}</td>
                         <td class="actions">
                             <button onclick="showTournamentEditForm(${t.tournament_id},'${t.tournament_name.replace(/'/g, "\\'")}','${t.start_date}','${t.end_date}',${t.prize_pool})">Edit</button>
                             <button class="btn-danger" onclick="handleTournamentDelete(${t.tournament_id})">Delete</button>
                         </td>
                     </tr>`;
+            });
+        }
+
+        function populateTeamDropdowns(teams) {
+            const createDropdown = document.getElementById('player-team-create');
+            const editDropdown = document.getElementById('player-team-update');
+            createDropdown.innerHTML = '<option value="">Unassigned</option>';
+            editDropdown.innerHTML = '<option value="">Unassigned</option>';
+            teams.forEach(team => {
+                const option = `<option value="${team.team_id}">${team.team_name}</option>`;
+                createDropdown.innerHTML += option;
+                editDropdown.innerHTML += option;
             });
         }
 
@@ -244,9 +261,9 @@
                 renderTeams(data.teams);
                 renderPlayers(data.players);
                 renderTournaments(data.tournaments);
+                populateTeamDropdowns(data.teams);
             } catch (error) {
                 console.error("Error loading dashboard:", error);
-                // Optionally show an error message in all tables
             }
         }
         
@@ -294,13 +311,14 @@
         }
 
         // --- Player Functions ---
-        function showPlayerEditForm(id, name, username, country) {
+        function showPlayerEditForm(id, name, username, country, team_id) {
             document.getElementById('create-player-form').style.display = 'none';
             document.getElementById('edit-player-form').style.display = 'block';
             document.getElementById('player-id-update').value = id;
             document.getElementById('player-name-update').value = name;
             document.getElementById('player-username-update').value = username;
             document.getElementById('player-country-update').value = country;
+            document.getElementById('player-team-update').value = team_id;
         }
 
         function cancelPlayerEdit() {
@@ -312,15 +330,17 @@
             const player_name = document.getElementById('player-name-create').value;
             const username = document.getElementById('player-username-create').value;
             const country = document.getElementById('player-country-create').value;
+            const team_id = document.getElementById('player-team-create').value;
             if (!player_name || !username || !country) return alert('All player fields are required.');
             await fetch(`${API_URL}/api/players`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ player_name, username, country })
+                body: JSON.stringify({ player_name, username, country, team_id: team_id || null })
             });
             document.getElementById('player-name-create').value = '';
             document.getElementById('player-username-create').value = '';
             document.getElementById('player-country-create').value = '';
+            document.getElementById('player-team-create').value = '';
             fetchDashboardData();
         }
 
@@ -329,10 +349,11 @@
             const player_name = document.getElementById('player-name-update').value;
             const username = document.getElementById('player-username-update').value;
             const country = document.getElementById('player-country-update').value;
+            const team_id = document.getElementById('player-team-update').value;
             await fetch(`${API_URL}/api/players/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ player_name, username, country })
+                body: JSON.stringify({ player_name, username, country, team_id: team_id || null })
             });
             cancelPlayerEdit();
             fetchDashboardData();
