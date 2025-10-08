@@ -39,7 +39,7 @@ CREATE TABLE Player (
 -- Team Table
 CREATE TABLE Team (
     team_id NUMBER PRIMARY KEY,
-    team_name VARCHAR2(100) NOT NULL
+    team_name VARCHAR2(100) NOT NULL UNIQUE 
 );
 
 -- Game Table
